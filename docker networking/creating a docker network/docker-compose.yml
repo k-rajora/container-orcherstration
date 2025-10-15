@@ -1,0 +1,36 @@
+services:
+  mysqldb:
+   image: 'mysql:latest'
+   environment:
+    - MYSQL_ROOT_PASSWORD=root
+    - MYSQL_DATABASE=userinfo
+   container_name: "mysqldb1"
+   networks:
+    - my-network-shark
+   healthcheck:
+     test: ['CMD','mysqladmin','ping','-h','localhost']
+     timeout: 20s
+     retries: 10
+   
+
+  mypython:
+   build: ./
+   container_name: myapp
+   networks:
+    - my-network-shark
+   depends_on:
+    mysqldb:
+     condition: service_healthy
+   stdin_open: true
+   tty: true
+   volumes:
+     - ./servers.txt:/mysql/servers.txt
+
+
+networks:
+  my-network-shark:
+  
+
+
+
+    
